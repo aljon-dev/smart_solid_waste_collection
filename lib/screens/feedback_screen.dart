@@ -1,22 +1,22 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:smart_waste_mobile/screens/feedback_list.dart';
+import 'package:path/path.dart' as path;
+import 'package:smart_waste_mobile/screens/feedback_status_screen.dart';
 import 'package:smart_waste_mobile/screens/terms_conditions_page.dart';
 import 'package:smart_waste_mobile/services/add_feedback.dart';
-import 'package:smart_waste_mobile/utlis/app_constants.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
 import 'package:smart_waste_mobile/widgets/button_widget.dart';
 import 'package:smart_waste_mobile/widgets/drawer_widget.dart';
 import 'package:smart_waste_mobile/widgets/textfield_widget.dart';
 import 'package:smart_waste_mobile/widgets/toast_widget.dart';
-import 'package:path/path.dart' as path;
+
 import '../widgets/text_widget.dart';
 import 'home_screen.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -77,47 +77,52 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   String? selectedBarangay;
   final List<String> barangays = [
-    'Aglayan',
-    'Bangcud',
-    'Barangay 1',
-    'Barangay 2',
-    'Barangay 3',
-    'Barangay 4',
-    'Barangay 5',
-    'Barangay 6',
-    'Barangay 7',
-    'Barangay 8',
-    'Barangay 9',
-    'Barangay 10',
-    'Busdi',
-    'Cabangahan',
-    'Caburacanan',
-    'Can-ayan',
-    'Capitan Bayong',
-    'Casisang',
-    'Dalwangan',
-    'Indalasa',
-    'Kalasungay',
-    'Kibalabag',
-    'Kulaman',
-    'Laguitas',
-    'Linabo',
-    'Maligaya',
-    'Magsaysay (Panadtalan)',
-    'Managok',
-    'Mapayag',
-    'Mapulo',
-    'Miglamin',
-    'Patpat',
-    'Rizal (Poblacion)',
-    'San Jose',
-    'Santo Niño',
-    'Silae',
-    'Simaya',
-    'Sinanglanan',
-    'Sumpong',
-    'Violeta',
-    'Zamboanguita',
+    "Aglayan",
+    "Apo Macote",
+    "Bangcud",
+    "Barangay 1",
+    "Barangay 10",
+    "Barangay 11",
+    "Barangay 2",
+    "Barangay 3",
+    "Barangay 4",
+    "Barangay 5",
+    "Barangay 6",
+    "Barangay 7",
+    "Barangay 8",
+    "Barangay 9",
+    "Busdi",
+    "Cabangahan",
+    "Caburacanan",
+    "Canayan",
+    "Capitan Angel",
+    "Casisang",
+    "Dalwangan",
+    "Imbayao",
+    "Indalaza",
+    "Kabalabag",
+    "Kalasungay",
+    "Kulaman",
+    "Laguitas",
+    "Linabo",
+    "Magsaysay",
+    "Maligaya",
+    "Managok",
+    "Manalog",
+    "Mapayag",
+    "Mapulo",
+    "Miglamin",
+    "Patpat",
+    "Saint Peter",
+    "San Jose",
+    "San Martin",
+    "Santo Niño",
+    "Silae",
+    "Simaya",
+    "Sinanglanan",
+    "Sumpong",
+    "Violeta",
+    "Zamboanguita",
   ];
   @override
   Widget build(BuildContext context) {
@@ -138,8 +143,15 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                    width: 50,
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const FeedbackStatusScreen()));
+                    },
+                    icon: const Icon(
+                      Icons.checklist_rtl_sharp,
+                      color: Colors.white,
+                    ),
                   ),
                   TextWidget(
                     text: 'Smart Solid\nWaste Collector',
