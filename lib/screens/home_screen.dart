@@ -2,13 +2,10 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smart_waste_mobile/screens/announcement_screen.dart';
-import 'package:smart_waste_mobile/screens/notif_screen.dart';
 import 'package:smart_waste_mobile/services/data.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
 import 'package:smart_waste_mobile/utlis/distance_calculations.dart';
@@ -343,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   await controller.animateCamera(
                                       CameraUpdate.newCameraPosition(
                                           CameraPosition(
-                                              target: LatLng(lat, lng),
+                                              target: validPoints.last,
                                               zoom: 18)));
                                 },
                               ),
