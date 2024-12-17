@@ -126,11 +126,12 @@ class AnnouncementScreen extends StatelessWidget {
                                 children: [
                                   for (int i = 0; i < data.docs.length; i++)
                                     ListTile(
-                                      leading: const Icon(Icons.notifications),
+                                      leading:
+                                          const Icon(Icons.campaign_outlined),
                                       title: TextWidget(
                                           align: TextAlign.start,
                                           text:
-                                              '${data.docs[i]['announcement']} ${DateFormat.yMMMd().add_jm().format(data.docs[i]['postedAt'].toDate())}',
+                                              '${data.docs[i]['announcement']}\n${DateFormat.yMMMd().add_jm().format(data.docs[i]['postedAt'].toDate())}',
                                           fontSize: 14),
                                     )
                                 ],

@@ -81,8 +81,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     "Apo Macote",
     "Bangcud",
     "Barangay 1",
-    "Barangay 10",
-    "Barangay 11",
     "Barangay 2",
     "Barangay 3",
     "Barangay 4",
@@ -91,6 +89,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     "Barangay 7",
     "Barangay 8",
     "Barangay 9",
+    "Barangay 10",
+    "Barangay 11",
     "Busdi",
     "Cabangahan",
     "Caburacanan",
@@ -324,6 +324,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 onTap: () {
                                   if (images.length <= 1) {
                                     uploadPicture('camera');
+                                  } else {
+                                    Navigator.pop(context);
+                                    showToast(
+                                        'Upload Limit Reached. You can only upload up to 2 images per day. Please try again tomorrow.');
                                   }
                                 },
                                 title: const Text('Camera'),
@@ -333,6 +337,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 onTap: () {
                                   if (images.length <= 1) {
                                     uploadPicture('gallery');
+                                  } else {
+                                    Navigator.pop(context);
+                                    showToast(
+                                        'Upload Limit Reached. You can only upload up to 2 images per day. Please try again tomorrow.');
                                   }
                                 },
                                 title: const Text('Gallery'),
