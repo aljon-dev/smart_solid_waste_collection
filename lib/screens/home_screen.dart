@@ -274,17 +274,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 height: 350,
                                 child: GoogleMap(
                                   markers: {
-                                    Marker(
-                                      position: validPoints.isNotEmpty
-                                          ? validPoints.first
-                                          : const LatLng(0, 0),
-                                      markerId: const MarkerId('Marker'),
-                                      infoWindow: InfoWindow(
-                                        title: 'Receiver',
-                                        snippet:
-                                            '${calculateDistance(validPoints.first.latitude, validPoints.first.longitude, validPoints.last.latitude, validPoints.last.longitude)}km away',
-                                      ),
-                                    ),
+                                    // Marker(
+                                    //   position:  LatLng(lat, lng),
+                                    //   markerId: const MarkerId('Marker'),
+                                    //   infoWindow: InfoWindow(
+                                    //     title: 'Receiver',
+                                    //     snippet:
+                                    //         '${calculateDistance(validPoints.first.latitude, validPoints.first.longitude, validPoints.last.latitude, validPoints.last.longitude)}km away',
+                                    //   ),
+                                    // ),
                                     Marker(
                                       position: validPoints.isNotEmpty
                                           ? validPoints.last
