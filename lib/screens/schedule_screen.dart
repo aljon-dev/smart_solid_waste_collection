@@ -1,16 +1,7 @@
-import 'dart:async';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_inapp_notifications/flutter_inapp_notifications.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smart_waste_mobile/screens/announcement_screen.dart';
-import 'package:smart_waste_mobile/screens/notif_screen.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
-import 'package:smart_waste_mobile/utlis/distance_calculations.dart';
-import 'package:smart_waste_mobile/utlis/schedule_data.dart';
 import 'package:smart_waste_mobile/widgets/button_widget.dart';
 import 'package:smart_waste_mobile/widgets/drawer_widget.dart';
 import 'package:smart_waste_mobile/widgets/text_widget.dart';

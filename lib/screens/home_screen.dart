@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,11 +8,13 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smart_waste_mobile/screens/announcement_screen.dart';
 import 'package:smart_waste_mobile/services/data.dart';
+import 'package:smart_waste_mobile/services/notification.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
 import 'package:smart_waste_mobile/utlis/distance_calculations.dart';
 import 'package:smart_waste_mobile/widgets/button_widget.dart';
 import 'package:smart_waste_mobile/widgets/drawer_widget.dart';
 import 'package:smart_waste_mobile/widgets/text_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,16 +24,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+   final _firestore = FirebaseFirestore.instance;
+   final notificationService = NotificationService();
+   Timestamp today = Timestamp.fromDate(DateTime.now());
+
+Future<void> _initilizeApp() async{
+    await notificationService.init();
+    getLocation();
+}
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    getLocation();
+    _initilizeApp();
   }
+
 
   @override
   void dispose() {
-    // TODO: implement dispose
+ 
     super.dispose();
     mapController!.dispose();
   }
@@ -98,13 +110,17 @@ class _HomeScreenState extends State<HomeScreen> {
         false; // Return false if dialog is dismissed
   }
 
+ 
+
   @override
   Widget build(BuildContext context) {
+  
     return WillPopScope(
       onWillPop: () async {
         bool shouldExit = await _showExitConfirmation(context);
         return shouldExit; // Return true if user confirms, false otherwise
       },
+      
       child: Scaffold(
         endDrawerEnableOpenDragGesture: false,
         drawerEnableOpenDragGesture: false,
@@ -333,6 +349,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.green,
                                 label: 'Track GT',
                                 onPressed: () async {
+
+                                
                                   final GoogleMapController controller =
                                       await _controller.future;
                                   await controller.animateCamera(

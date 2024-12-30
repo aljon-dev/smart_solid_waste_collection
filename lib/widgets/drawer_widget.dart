@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smart_waste_mobile/screens/aboutus_screen.dart';
-import 'package:smart_waste_mobile/screens/announcement_screen.dart';
 import 'package:smart_waste_mobile/screens/feedback_screen.dart';
 import 'package:smart_waste_mobile/screens/notif_screen.dart';
 import 'package:smart_waste_mobile/screens/schedule_screen.dart';

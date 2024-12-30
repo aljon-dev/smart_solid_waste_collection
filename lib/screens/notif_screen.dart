@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
-import 'package:smart_waste_mobile/utlis/distance_calculations.dart';
 import 'package:smart_waste_mobile/widgets/drawer_widget.dart';
 import 'package:smart_waste_mobile/widgets/text_widget.dart';
 
@@ -15,6 +13,9 @@ class NotifScreen extends StatefulWidget {
 }
 
 class _NotifScreenState extends State<NotifScreen> {
+
+  final _firestore = FirebaseFirestore.instance;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -40,32 +41,13 @@ class _NotifScreenState extends State<NotifScreen> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: const DrawerWidget(),
       backgroundColor: background,
-      body: hasLoaded
-          ? StreamBuilder<DatabaseEvent>(
-              stream: FirebaseDatabase.instance.ref().onValue,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return const Center(child: Text('Error'));
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                      ),
-                    ),
-                  );
-                }
-                final dynamic cardata = snapshot.data!.snapshot.value;
-
-                return Padding(
+      body:  Padding(
                   padding: const EdgeInsets.all(20),
                   child: SingleChildScrollView(
                     child: Column(
@@ -148,94 +130,48 @@ class _NotifScreenState extends State<NotifScreen> {
                                 height: 5,
                               ),
                               StreamBuilder<QuerySnapshot>(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('Schedules')
-                                      .orderBy('addedAt', descending: true)
-                                      .snapshots(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                                    if (snapshot.hasError) {
-                                      print(snapshot.error);
-                                      return const Center(child: Text('Error'));
-                                    }
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(top: 50),
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      );
-                                    }
+                                stream: _firestore.collection('Notifications').orderBy('TimeStamp',descending: true).snapshots(), 
+                                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
+                                  if(snapshot.hasError){
+                                    return Text('Error: ${snapshot.error}');
+                                  }
 
-                                    final data = snapshot.requireData;
-                                    return SizedBox(
-                                      height: 370,
-                                      child: ListView.builder(
-                                        itemCount: data.docs.length,
-                                        itemBuilder: (context, index) {
-                                          return !isSameDay(
-                                                  data.docs[index]['addedAt'])
-                                              ? const SizedBox()
-                                              : calculateDistance(
-                                                          lat,
-                                                          lng,
-                                                          double.parse(cardata['NODES']
-                                                                          ['Truck-01']
-                                                                      ['current'][
-                                                                  cardata['NODES']['Truck-01']['current'].length -
-                                                                      1]
-                                                              .toString()
-                                                              .split(',')[0]),
-                                                          double.parse(cardata['NODES']
-                                                                          ['Truck-01']
-                                                                      ['current']
-                                                                  [cardata['NODES']['Truck-01']['current'].length - 1]
-                                                              .toString()
-                                                              .split(',')[1])) >
-                                                      10
-                                                  ? const SizedBox()
-                                                  : calculateDistance(lat, lng, double.parse(cardata['NODES']['Truck-01']['current'][cardata['NODES']['Truck-01']['current'].length - 1].toString().split(',')[0]), double.parse(cardata['NODES']['Truck-01']['current'][cardata['NODES']['Truck-01']['current'].length - 1].toString().split(',')[1])) <= 1
-                                                      ? ListTile(
-                                                          leading: const Icon(
-                                                              Icons
-                                                                  .notifications),
-                                                          title: TextWidget(
-                                                              align: TextAlign
-                                                                  .start,
-                                                              text:
-                                                                  'Garbage Truck Collector is nearby please prepare your garbage.',
-                                                              fontSize: 14),
-                                                        )
-                                                      : ListTile(
-                                                          leading: const Icon(
-                                                              Icons
-                                                                  .notifications),
-                                                          title: TextWidget(
-                                                              align: TextAlign
-                                                                  .start,
-                                                              text:
-                                                                  'Garbage Truck Collector has arrived in boundary please prepare your garbage”. Thank you',
-                                                              fontSize: 14),
-                                                        );
-                                        },
+                                  if(!snapshot.hasData){
+                                     return const Center(child: CircularProgressIndicator(),);
+                                  }
+
+                                  final notif = snapshot.data!.docs;
+
+                                  return Expanded(child: ListView.builder(
+                                    itemCount: notif.length,
+                                    itemBuilder: (context,index){
+                                      
+                                      final notifications = notif[index];
+
+                                      
+
+                                      return Card(
+                                        child:  ListTile(
+                                          title: Text('Garbage ${notifications['GBPoint']}'),
+                                          subtitle: Text(notifications['Message']),
                                       ),
-                                    );
-                                  }),
+                                      );
+
+
+                                    }));
+                                })
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                );
-              })
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
-    );
+            )
+          );
+        }
+         
+
+  
   }
 
   bool isSameDay(Timestamp timestamp) {
@@ -287,4 +223,4 @@ class _NotifScreenState extends State<NotifScreen> {
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
   }
-}
+
