@@ -134,7 +134,7 @@ class FeedbackStatusScreen extends StatelessWidget {
                                             // Green Box
                                             Container(
                                               height: 80,
-                                              width: 260,
+                                              width: 250,
                                               color: Colors.green[200],
                                               child: Padding(
                                                 padding:
