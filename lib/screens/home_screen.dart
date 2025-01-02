@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smart_waste_mobile/screens/announcement_screen.dart';
 import 'package:smart_waste_mobile/services/data.dart';
+import 'package:smart_waste_mobile/services/notification.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
 import 'package:smart_waste_mobile/utlis/distance_calculations.dart';
 import 'package:smart_waste_mobile/widgets/button_widget.dart';
@@ -21,10 +23,45 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _firestore = FirebaseFirestore.instance;
+  final notificationService = NotificationService();
+  Timestamp today = Timestamp.fromDate(DateTime.now());
+
+  Future<void> showNotifs() async {
+    try {
+      final now = DateTime.now();
+      final startTime = now.subtract(const Duration(minutes: 1));
+      final endTime = now.add(const Duration(minutes: 1));
+
+      _firestore
+          .collection('Notifications')
+          .where('TimeStamp', isGreaterThan: startTime)
+          .where('TimeStamp', isLessThan: endTime)
+          .snapshots()
+          .listen((snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          for (final data in snapshot.docs) {
+            notificationService.showNotification(
+                id: 1, title: data['GBPoint'], body: data['Message']);
+          }
+        } else {
+          print('No notifications within the time range');
+        }
+      }, onError: (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error listening to notifications: $e')));
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    showNotifs();
     getLocation();
   }
 
