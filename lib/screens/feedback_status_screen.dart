@@ -132,41 +132,39 @@ class FeedbackStatusScreen extends StatelessWidget {
                                               CrossAxisAlignment.center,
                                           children: [
                                             // Green Box
-                                            Expanded(
-                                              child: Container(
-                                                height: 80,
-                                                color: Colors.green[200],
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        TextWidget(
-                                                          text:
-                                                              'Location: ${data1['location']}',
-                                                          fontSize: 14,
-                                                          fontFamily: 'Bold',
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        TextWidget(
-                                                          align:
-                                                              TextAlign.start,
-                                                          text:
-                                                              '${data1['Feedback']}',
-                                                          fontSize: 12,
-                                                          fontFamily: 'Medium',
-                                                        ),
-                                                      ],
-                                                    ),
+                                            Container(
+                                              height: 80,
+                                              width: 260,
+                                              color: Colors.green[200],
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      TextWidget(
+                                                        text:
+                                                            'Location: ${data1['location']}',
+                                                        fontSize: 14,
+                                                        fontFamily: 'Bold',
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      TextWidget(
+                                                        align: TextAlign.start,
+                                                        text:
+                                                            '${data1['Feedback']}',
+                                                        fontSize: 12,
+                                                        fontFamily: 'Medium',
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),

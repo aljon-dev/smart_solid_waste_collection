@@ -258,11 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
                           final dynamic data = snapshot.data!.snapshot.value;
-                          final List<LatLng> validPoints =
-                              data['NODES']['Truck-01']['current'] == null
-                                  ? [LatLng(lat, lng)]
-                                  : getValidLatLngPoints(
-                                      data['NODES']['Truck-01']['current']);
+                          final List<LatLng> validPoints = getValidLatLngPoints(
+                              data['NODES']['Truck-01']['current']);
 
                           return Column(
                             children: [
@@ -315,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mapType: MapType.normal,
                                   initialCameraPosition: CameraPosition(
                                     target: validPoints.isNotEmpty
-                                        ? validPoints.first
+                                        ? validPoints.last
                                         : const LatLng(0, 0),
                                     zoom: 14.4746,
                                   ),
