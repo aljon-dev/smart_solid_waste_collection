@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_service/flutter_foreground_service.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:smart_waste_mobile/firebase_options.dart';
 import 'package:smart_waste_mobile/screens/home_screen.dart';
@@ -20,15 +19,15 @@ void main() async {
   await notificationService.init();
   showNotifs();
 
-  startForegroundService();
+  // startForegroundService();
   await GetStorage.init();
   runApp(const MyApp());
 }
 
-void startForegroundService() async {
-  ForegroundService().start();
-  debugPrint("Started service");
-}
+// void startForegroundService() async {
+//   ForegroundService().start();
+//   debugPrint("Started service");
+// }
 
 final _firestore = FirebaseFirestore.instance;
 final notificationService = NotificationService();
@@ -73,9 +72,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    startForegroundService();
+    // startForegroundService();
   }
-
+// 
   final box = GetStorage();
   @override
   Widget build(BuildContext context) {
