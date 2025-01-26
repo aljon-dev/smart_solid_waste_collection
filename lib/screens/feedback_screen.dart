@@ -34,18 +34,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     final today = DateTime.now();
 
     // Check if the function has already been triggered today
-    if (lastTriggeredDate != null) {
-      final lastDate = DateTime.parse(lastTriggeredDate);
+    final lastDate = DateTime.parse(lastTriggeredDate!);
 
-      // If the last triggered date is today, do not run the function
-      if (lastDate.year == today.year &&
-          lastDate.month == today.month &&
-          lastDate.day == today.day) {
-        print('Already triggered today');
-        return;
-      }
+    // If the last triggered date is today, do not run the function
+    if (lastDate.year == today.year &&
+        lastDate.month == today.month &&
+        lastDate.day == today.day) {
+      print('Already triggered today');
+      return;
     }
-
+  
     // Run the callback function and update the last triggered date
     callback();
 

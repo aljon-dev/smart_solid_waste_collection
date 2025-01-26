@@ -1,14 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smart_waste_mobile/services/notification.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
 import 'package:smart_waste_mobile/widgets/drawer_widget.dart';
 import 'package:smart_waste_mobile/widgets/text_widget.dart';
 
-class AnnouncementScreen extends StatelessWidget {
+class AnnouncementScreen extends StatefulWidget {
   const AnnouncementScreen({super.key});
 
+  @override  
+  _AnnouncementScreenState createState() => _AnnouncementScreenState();
+}
+
+class _AnnouncementScreenState extends State<AnnouncementScreen> {
+
+  final NotificationService _notificationService = NotificationService();
+
+ final _firestore = FirebaseFirestore.instance;
+
+ 
+
   @override
+  void initState() {
+    super.initState();
+
+  }
+  
+
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       endDrawer: const DrawerWidget(),
@@ -130,8 +150,7 @@ class AnnouncementScreen extends StatelessWidget {
                                           const Icon(Icons.campaign_outlined),
                                       title: TextWidget(
                                           align: TextAlign.start,
-                                          text:
-                                              '${data.docs[i]['announcement']}\n${DateFormat.yMMMd().add_jm().format(data.docs[i]['postedAt'].toDate())}',
+                                          text: '${data.docs[i]['announcement']}\n${DateFormat.yMMMd().add_jm().format(data.docs[i]['postedAt'].toDate())}',
                                           fontSize: 14),
                                     )
                                 ],
@@ -148,4 +167,5 @@ class AnnouncementScreen extends StatelessWidget {
       ),
     );
   }
+
 }
