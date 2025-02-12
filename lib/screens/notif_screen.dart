@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:smart_waste_mobile/utlis/colors.dart';
 import 'package:smart_waste_mobile/widgets/drawer_widget.dart';
 import 'package:smart_waste_mobile/widgets/text_widget.dart';
@@ -148,12 +149,16 @@ class _NotifScreenState extends State<NotifScreen> {
                                       
                                       final notifications = notif[index];
 
-                                      
+                                      DateTime timestamp = notifications['TimeStamp'].toDate();
 
+                                      String formattedTime = DateFormat('MMM d, yyyy hh:mm a').format(timestamp);
+
+                                    
                                       return Card(
                                         child:  ListTile(
                                           title: Text('Garbage ${notifications['GBPoint']}'),
-                                          subtitle: Text(notifications['Message']),
+                                          subtitle: Text('  ${notifications['Message']}\n  $formattedTime '),
+                                      
                                       ),
                                       );
 

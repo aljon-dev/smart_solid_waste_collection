@@ -35,19 +35,26 @@ class NotificationService {
   }
 
   void _handleNotificationTap(NotificationResponse response) {
-    if (response.id == 2) {
-      navigatorKey?.currentState?.push(
-        MaterialPageRoute(
-          builder: (context) => const AnnouncementScreen(),
-        ),
-      );
-    }
+      debugPrint("Notification tapped with payload: ${response.payload}");
+        
+          if(response.payload == 'Announcement'){
+                navigatorKey!.currentState?.push(
+                  MaterialPageRoute(builder: (context) => const AnnouncementScreen())
+                );
+
+          }else{
+                debugPrint("Error ${response.payload}");
+          }
+
+    
   }
 
   Future<void> showNotification({
     required int id,
     required String title,
     required String body,
+
+    
   }) async {
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'high_test_channel',
@@ -69,13 +76,10 @@ class NotificationService {
       title,
       body,
       platformDetails,
+    
     );
 
-    // Immediate navigation for testing
-    if (id == 2) {
-      navigatorKey?.currentState?.push(
-        MaterialPageRoute(builder: (context) => const AnnouncementScreen()),
-      );
+  
     }
-  }
+  
 }

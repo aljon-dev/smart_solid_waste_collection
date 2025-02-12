@@ -1,4 +1,5 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,56 +23,20 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  final searchController = TextEditingController();
+
+
+
   String nameSearched = '';
 
-  List data = [
-    {
-      'name': 'Monday',
-      'time': '8:00AM-12:00NN',
-    },
-    {
-      'name': 'Tuesday',
-      'time': '6:00AM-12:00NN',
-    },
-    {
-      'name': 'Wednesday',
-      'time': '8:00AM-12:00NN',
-    },
-    {
-      'name': 'Thursday',
-      'time': '8:00AM-12:00NN',
-    },
-    {
-      'name': 'Friday',
-      'time': '8:00AM-12:00NN',
-    },
-    {
-      'name': 'Saturday',
-      'time': '6:00AM-10:00AM',
-    },
-    {
-      'name': 'Sunday',
-      'time': '2:00PM-8:00PM',
-    },
-  ];
+  final _firestore = FirebaseFirestore.instance;
 
-  List notes = [
-    '',
-    '',
-    '''
-Silae - Miglamin 2nd Wednesday
-of the Month\n
-Mapulo - Miglamin 4th Wednesday
-of the Month
-''',
-    '''
-Mapayag - Can - ayan\n1st Thursday of the month
-    ''',
-    '',
-    '',
-    '',
+  String selectedDay = 'All';
+
+  final List<String> daysOrder = [
+    'All', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
   ];
+  
+
   int index = 0;
   bool isNote = false;
   @override
@@ -148,27 +113,13 @@ Mapayag - Can - ayan\n1st Thursday of the month
               Container(
                 width: double.infinity,
                 height: 600,
-                decoration: BoxDecoration(
-                  color: Colors.green[800],
-                  borderRadius: BorderRadius.circular(20),
-                ),
+    
                 child: Column(
                   children: [
                     const SizedBox(
                       height: 20,
                     ),
-                    Container(
-                      width: double.infinity,
-                      height: 50,
-                      color: Colors.brown,
-                      child: Center(
-                        child: TextWidget(
-                          text: data[index]['name'],
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                   
                     const SizedBox(
                       height: 5,
                     ),
@@ -180,103 +131,131 @@ Mapayag - Can - ayan\n1st Thursday of the month
                     const SizedBox(
                       height: 5,
                     ),
-                    ButtonWidget(
-                      width: 200,
-                      color: primary,
-                      label: data[index]['time'],
-                      onPressed: () {},
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    GestureDetector(
-                      onHorizontalDragEnd: (details) {
-                        if (details.velocity.pixelsPerSecond.dx > 0) {
-                          if (index > 0) {
-                            setState(() {
-                              index--;
-                            });
-                          }
-                        } else if (details.velocity.pixelsPerSecond.dx < 0) {
-                          if (index < 6) {
-                            setState(() {
-                              index++;
-                            });
-                          }
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Container(
-                          width: double.infinity,
-                          height: 300,
-                          decoration: BoxDecoration(
-                            color: Colors.green[400],
-                            borderRadius: BorderRadius.circular(20),
+                    
+                     Padding(
+           padding: const EdgeInsets.all(10),
+             child: SizedBox(
+              width: double.infinity,
+              child: Container(
+              decoration: BoxDecoration(
+              color: Colors.white, // White background
+              borderRadius: BorderRadius.circular(10), // Rounded corners
+              border: Border.all(color: Colors.white, width: 2), // White border
+             ),
+            child: DropdownButtonHideUnderline( // Hides the default underline
+               child: DropdownButton<String>(
+                 isExpanded: true,
+                value: selectedDay,
+               items: daysOrder.map((String day) {
+                return DropdownMenuItem(
+                value: day,
+               child: Text(day, style: const TextStyle(color: Colors.black)), // Black text for visibility
+              );
+                }).toList(),
+             onChanged: (String? newValue) {
+               setState(() {
+                  selectedDay = newValue!;
+              });
+           },
+            dropdownColor: Colors.white, // White dropdown background
+              ),
+            ),
+          ),
+        ),
+       ),
+
+
+          StreamBuilder<QuerySnapshot>(stream:_firestore.collection('Schedules').snapshots(),
+                    builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshots){
+                      if(snapshots.hasError){
+                        return const Center(child:Text('Error '));
+                      }
+
+                      if(!snapshots.hasData){
+                        return const Center(child: CircularProgressIndicator(),);
+                      }
+
+                  
+
+                     List<QueryDocumentSnapshot> sched = snapshots.data!.docs;
+
+                     sched.sort((a,b){
+                      String dayA = a['day'] ?? '';
+                      String dayB = b['day'] ?? '';
+
+                      int indexA = daysOrder.indexOf(dayA);
+                      int indexB = daysOrder.indexOf(dayB);
+
+                      return indexA.compareTo(indexB);
+
+                     });
+
+                     if(selectedDay != 'All'){
+                      sched = sched.where((doc)=> doc['day'] == selectedDay).toList();
+                     }
+
+                    return Expanded(child: ListView.builder(
+                      itemCount: sched.length,
+                      itemBuilder: (context,index){
+
+                        final schedules  = sched[index];
+
+
+                        return  Card(
+                          child: Padding(padding: EdgeInsets.all(16),
+                          child: Container(
+                            height: 120,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                               children: [
+                                Text('Barangay: ${schedules['barangay'] ?? ' No Barangay'} ',style: const TextStyle(
+                                  color:Colors.black,
+                                  fontSize: 20,
+                                ),
+                                ),
+                              const  SizedBox(height: 1,),
+                                 Text('Note:${schedules['note'] ?? ' No Notes'} ',style: const TextStyle(
+                                  color:Colors.black,
+                                  fontSize: 15,
+                                ),),
+
+                               const  SizedBox(height: 1,),
+                                 Text('Day:${schedules['day'] ?? ' No Day'} ',style: const TextStyle(
+                                  color:Colors.black,
+                                  fontSize: 15,
+                                ),),
+
+                                 const SizedBox(height: 1,),
+                                 Text('Note:${schedules['note'] ?? ' No Notes'} ',style: const TextStyle(
+                                  color:Colors.black,
+                                  fontSize: 15,
+                                ),),
+
+
+                                const SizedBox(height: 1,),
+                                 Text('Time:${schedules['timeF'] } - ${schedules['timeT'] } ',style: const TextStyle(
+                                  color:Colors.black,
+                                  fontSize: 15,
+                                ),)
+                          
+                             ],
+                            ),
                           ),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.green[600],
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: TextWidget(
-                                    text: isNote ? 'Note' : 'Area',
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Center(
-                                  child: isNote
-                                      ? TextWidget(
-                                          text: notes[index],
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                        )
-                                      : Image.asset(
-                                          'assets/images/${index + 1}.PNG',
-                                          height: 210,
-                                        ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    ButtonWidget(
-                      width: 150,
-                      color: Colors.grey,
-                      radius: 100,
-                      label: !isNote ? 'Note' : 'Back',
-                      onPressed: () {
-                        if (!isNote) {
-                          setState(() {
-                            isNote = true;
-                          });
-                        } else {
-                          setState(() {
-                            isNote = false;
-                          });
-                        }
-                      },
-                    )
+                          )
+                        );
+
+
+
+
+
+                    }
+                    ));
+                          
+
+                    }
+                  )
+                  
+                    
                   ],
                 ),
               ),

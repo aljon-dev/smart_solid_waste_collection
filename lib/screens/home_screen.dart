@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_service/flutter_foreground_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,16 +23,48 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _firestore = FirebaseFirestore.instance;
+  final notificationService = NotificationService();
+  Timestamp today = Timestamp.fromDate(DateTime.now());
 
+  Future<void> showNotifs() async {
+    try {
+      final now = DateTime.now();
+      final startTime = now.subtract(const Duration(minutes: 1));
+      final endTime = now.add(const Duration(minutes: 1));
+      int id = 0;
 
- 
+      _firestore
+          .collection('Notifications')
+          .where('TimeStamp', isGreaterThan: startTime)
+          .where('TimeStamp', isLessThan: endTime)
+          .snapshots()
+          .listen((snapshot) {
+        if (snapshot.docs.isNotEmpty) {
+          for (final data in snapshot.docs) {
+             id++;
 
-
+            notificationService.showNotification(
+            id: id, title: data['GBPoint'], body: data['Message']);
+          }
+        } else {
+          print('No notifications within the time range');
+        }
+      }, onError: (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error listening to notifications: $e')));
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-  
+    showNotifs();
     getLocation();
   }
 
@@ -267,11 +298,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
                           final dynamic data = snapshot.data!.snapshot.value;
-                          final List<LatLng> validPoints =
-                              data['NODES']['Truck-01']['current'] == null
-                                  ? [LatLng(lat, lng)]
-                                  : getValidLatLngPoints(
-                                      data['NODES']['Truck-01']['current']);
+                          final List<LatLng> validPoints = getValidLatLngPoints(
+                              data['NODES']['Truck-01']['current']);
 
                           return Column(
                             children: [
@@ -324,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mapType: MapType.normal,
                                   initialCameraPosition: CameraPosition(
                                     target: validPoints.isNotEmpty
-                                        ? validPoints.first
+                                        ? validPoints.last
                                         : const LatLng(0, 0),
                                     zoom: 14.4746,
                                   ),

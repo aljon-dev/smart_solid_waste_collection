@@ -27,6 +27,9 @@ void main() async {
 
   // Start Foreground Service
   startForegroundService();
+  showNotifs();
+  showNotifsAnnouncement();
+
 
   // Initialize GetStorage
   await GetStorage.init();
@@ -63,6 +66,7 @@ Future<void> showNotifs() async {
             id: 1,
             title: data['GBPoint'],
             body: data['checkpoint'],
+            
           );
         }
       }, onError: (e) {
@@ -72,6 +76,8 @@ Future<void> showNotifs() async {
     debugPrint('Exception: $e');
   }
 }
+
+
 
 // Fetch announcements
 Future<void> showNotifsAnnouncement() async {
@@ -90,6 +96,7 @@ Future<void> showNotifsAnnouncement() async {
             id: 2,
             title: 'Announcement',
             body: data['announcement'],
+            
           );
         }
       }, onError: (e) {
@@ -99,6 +106,8 @@ Future<void> showNotifsAnnouncement() async {
     debugPrint('Exception: $e');
   }
 }
+
+
 
 // Main App Widget
 class MyApp extends StatelessWidget {
