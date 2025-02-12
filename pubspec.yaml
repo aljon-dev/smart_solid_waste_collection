@@ -51,9 +51,6 @@ dependencies:
   geolocator:
   local_auth:
   flutter_inapp_notifications:
-  permission_handler: ^11.3.1
-  flutter_foreground_service: ^0.4.1
-  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:
