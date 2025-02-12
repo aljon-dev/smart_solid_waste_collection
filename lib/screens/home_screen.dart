@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,6 +13,8 @@ import 'package:smart_waste_mobile/utlis/distance_calculations.dart';
 import 'package:smart_waste_mobile/widgets/button_widget.dart';
 import 'package:smart_waste_mobile/widgets/drawer_widget.dart';
 import 'package:smart_waste_mobile/widgets/text_widget.dart';
+
+import '../services/notification.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final now = DateTime.now();
       final startTime = now.subtract(const Duration(minutes: 1));
       final endTime = now.add(const Duration(minutes: 1));
-
+      int id = 0;
       _firestore
           .collection('Notifications')
           .where('TimeStamp', isGreaterThan: startTime)
@@ -39,9 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
           .listen((snapshot) {
         if (snapshot.docs.isNotEmpty) {
           for (final data in snapshot.docs) {
-            
+            id++;
             notificationService.showNotification(
-            id: int.parse(now.millisecondsSinceEpoch.toString()), title: data['GBPoint'], body: data['Message'],payload: 'Notifications');
+            id: id , title: data['GBPoint'], body: data['Message'],payload: 'Notifications');
           }
         } else {
           print('No notifications within the time range');
@@ -60,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    showNotifs();
+  showNotifs();
     getLocation();
   }
 

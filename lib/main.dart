@@ -27,6 +27,9 @@ void main() async {
 
   // Start Foreground Service
   startForegroundService();
+  showNotifs();
+  showNotifsAnnouncement();
+
 
   // Initialize GetStorage
   await GetStorage.init();
@@ -52,18 +55,20 @@ Future<void> showNotifs() async {
     final now = DateTime.now();
     final startTime = now.subtract(const Duration(minutes: 1));
     final endTime = now.add(const Duration(minutes: 1));
-
+     int id = 0;
     _firestore.collection('Notifications')
       .where('TimeStamp', isGreaterThan: startTime)
       .where('TimeStamp', isLessThan: endTime)
       .snapshots()
       .listen((snapshot) {
         for (final data in snapshot.docs) {
+          id++;
           notificationService.showNotification(
-            id: 1,
+            id: id,
             title: data['GBPoint'],
             body: data['checkpoint'],
-            payload: 'Notification'
+            payload: 'Notifications'
+        
           );
         }
       }, onError: (e) {
@@ -80,18 +85,20 @@ Future<void> showNotifsAnnouncement() async {
     final now = DateTime.now();
     final startTime = now.subtract(const Duration(minutes: 1));
     final endTime = now.add(const Duration(minutes: 1));
-
+     int id = 0;
     _firestore.collection('Announcements')
       .where('postedAt', isGreaterThan: startTime)
       .where('postedAt', isLessThan: endTime)
       .snapshots()
       .listen((snapshot) {
         for (final data in snapshot.docs) {
+          id++;
           notificationService.showNotification(
-            id: int.parse(now.toString()),
+            id: id ,
             title: 'Announcement',
             body: data['announcement'],
-            payload: 'Announcement'
+            payload:'Announcement',
+          
           );
         }
       }, onError: (e) {
